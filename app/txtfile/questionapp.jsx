@@ -1,12 +1,11 @@
 
 
 var RNFS = require('react-native-fs');
-import {readDirGeneric} from 'react-native-fs';
-
+import { Dirs,FileSystem } from 'react-native-file-access';
 const readFile_ = async (fileName) => {
     try {
-      const filePath = RNFS.DocumentDirectoryPath + `/${fileName}`;
-      const content =  await RNFS.readFile(filePath, 'utf8');
+      // const filePath = RNFS.DocumentDirectoryPath + `/${fileName}`;
+      const content =  await FileSystem.readFile(Dirs.CacheDir + `/${fileName}`);
       return content;
     } catch (error) {
       console.error("Error reading file:", error);
