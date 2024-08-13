@@ -1,12 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Button , StyleSheet } from 'react-native';
+import { Question } from './txtfile/questionapp'
 
 const MainScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Hello, World!sdfkjshfkjshfkj</Text>
+      <Button
+        title="Press me"
+        onPress={() => Question('question.txt')}
+      />
     </View>
-
+    
   );
 };
 
