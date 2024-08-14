@@ -1,13 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet , SafeAreaView, Dimensions} from 'react-native';
-import Button from '../components/Button'
+import { View, Text, StyleSheet , SafeAreaView, Dimensions , TouchableOpacity} from 'react-native';
 
 const MainScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.view}>
         <Text style={styles.text}>Statistic Quiz App</Text>
-        <Button text="Start Quiz" size="menu" color='white' press={() => navigation.navigate("quizscreen")}/>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("quizscreen")}
+        >
+          <Text style={styles.buttonText}>Start Quiz</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -29,6 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: 'top',
     alignItems: 'center',
     backgroundColor: '#7632ad',
+    paddingTop: 75,
   },
   text: {
     fontSize: 24,
@@ -36,6 +41,17 @@ const styles = StyleSheet.create({
     color: "white",
     paddingBottom: screen.height*0.07,
   },
+  button:{
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    
+  },
+  buttonText:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  }
 });
 
 export default MainScreen;
