@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
-import questions from './question.json'; 
+import { parseQuestionFile } from './logic';
 
 export default function QuizScreen({ navigation }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [isCorrect, setIsCorrect] = useState(null); 
   const [score, setScore] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  
+  useEffect(() => {
+    const loadQuestions = async () => {
+      const parsedQuestions = await parseQuestionFile();
+      setQuestions(parsedQuestions);
+    };
+    loadQuestions();
+  }, []);
 
-  const [header, setHeader] = useState(questions[0].header);
-  const [question, setQuestion] = useState(questions[0].question);
-  const [choices, setChoices] = useState(questions[0].choices);
-
-  const handleAnswerPress = (choice) => {
-    const correctAnswer = questions[currentQuestionIndex].answer;
-    setSelectedAnswer(choice);
+  const handleAnswerPress = (choiceIndex) => {
+    const correctAnswerIndex = questions[currentQuestionIndex].answer;
     let updatedScore = score;
-    if (choice === correctAnswer) {
-      setIsCorrect(true);
-      updatedScore = updatedScore + 1;
+    if (choiceIndex === correctAnswerIndex) {
+      updatedScore = score + 1;
     } else {
-      setIsCorrect(false);
+      updatedScore = score;
     }
+
+    setSelectedAnswer(choiceIndex);
     setScore(updatedScore);
 
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
-        const nextIndex = currentQuestionIndex + 1;
-        setCurrentQuestionIndex(nextIndex);
-        setHeader(questions[nextIndex].header);
-        setQuestion(questions[nextIndex].question);
-        setChoices(questions[nextIndex].choices);
-        setSelectedAnswer(null); 
-        setIsCorrect(null); 
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedAnswer(null);
       } else {
         navigation.navigate('EndQuizScreen', {
           score: updatedScore,
@@ -41,44 +40,38 @@ export default function QuizScreen({ navigation }) {
       }
     }, 1000);
   };
-  const getButtonOpacity = (choice) => {
-    if (selectedAnswer === null) return 1; 
-    return selectedAnswer === choice ? 1 : 0.4; 
-  };
+
+  if (questions.length === 0) return null; // ถ้ายังไม่ได้โหลดคำถามให้แสดงหน้าจอว่างเปล่า
+
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.header}>{header}</Text>
-        <Text style={styles.question}>{question}</Text>
+        <Text style={styles.header}>{currentQuestion.header}</Text>
+        <Text style={styles.question}>{currentQuestion.question}</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[0]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#cf362b',opacity: getButtonOpacity(choices[0])}]}
-          onPress={() => handleAnswerPress(choices[0])}
-        >
-          <Text style={styles.buttonText}>{choices[0]}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[1]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#edb951',opacity: getButtonOpacity(choices[1])}]}
-          onPress={() => handleAnswerPress(choices[1])}
-        >
-          <Text style={styles.buttonText}>{choices[1]}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[2]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#7fcf46',opacity: getButtonOpacity(choices[2])}]}
-          onPress={() => handleAnswerPress(choices[2])}
-        >
-          <Text style={styles.buttonText}>{choices[2]}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[3]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#466fcf',opacity: getButtonOpacity(choices[3])}]}
-          onPress={() => handleAnswerPress(choices[3])}
-        >
-          <Text style={styles.buttonText}>{choices[3]}</Text>
-        </TouchableOpacity>
+        {currentQuestion.choices.map((choice, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  selectedAnswer === index
+                    ? index === currentQuestion.answer
+                      ? '#22732a'
+                      : '#912f33'
+                    : ['#cf362b', '#edb951', '#7fcf46', '#466fcf'][index],
+                opacity: selectedAnswer === null || selectedAnswer === index ? 1 : 0.4,
+              },
+            ]}
+            onPress={() => handleAnswerPress(index)}
+          >
+            <Text style={styles.buttonText}>{choice}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </SafeAreaView>
   );
