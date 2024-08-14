@@ -1,0 +1,15 @@
+[
+    {
+      "header": "",
+      "question": "ส่วนสูงของนักกีฬาบาสเกตบอลแต่ละคนในทีมโรงเรียนเป็นชุดข้อมูลแบบ population หรือ sample",
+      "choices": ["population", "sample", "เป็นทั้ง 2 แบบ", "ไม่ใช่ทั้ง 2 แบบ"],
+      "answer": "sample"
+    },
+    {
+      "header": "",
+      "question": "อัตราการเต้นของหัวใจของนักกิฬา ในขณะออกกำลังกาย เป็นข้อมูลระดับไหน",
+      "choices": ["Normal", "Ordinal", "Intervar", "Ratio"],
+      "answer": "Ratio"
+    }
+  ]
+  

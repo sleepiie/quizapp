@@ -9,7 +9,7 @@ function App() {
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }}>
-        <Stack.Screen name="mainscreeen" component={mainscreen} />
+        <Stack.Screen name="mainscreen" component={mainscreen} />
         <Stack.Screen name="quizscreen" component={quizscreen} />
       </Stack.Navigator>
     </NavigationContainer>
