@@ -8,12 +8,11 @@ export const parseQuestionFile = async () => {
 
   const response = await fetch(fileUri);
   const text = await response.text();
-  console.log(text);
-
   const lines = text.split('\n').filter(line => line.trim() !== '');
 
   let questions = [];
   let currentQuestion = {};
+
   
   lines.forEach((line) => {
     if (line.startsWith('<H:')) {
@@ -35,6 +34,6 @@ export const parseQuestionFile = async () => {
   if (currentQuestion.question) {
     questions.push(currentQuestion);
   }
-
+  console.log(questions);
   return questions;
 };
