@@ -6,6 +6,7 @@ export default function QuizScreen({ navigation }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null); 
+  const [score, setScore] = useState(0);
 
   const [header, setHeader] = useState(questions[0].header);
   const [question, setQuestion] = useState(questions[0].question);
@@ -14,12 +15,14 @@ export default function QuizScreen({ navigation }) {
   const handleAnswerPress = (choice) => {
     const correctAnswer = questions[currentQuestionIndex].answer;
     setSelectedAnswer(choice);
-
+    let updatedScore = score;
     if (choice === correctAnswer) {
       setIsCorrect(true);
+      updatedScore = updatedScore + 1;
     } else {
       setIsCorrect(false);
     }
+    setScore(updatedScore);
 
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
@@ -31,10 +34,16 @@ export default function QuizScreen({ navigation }) {
         setSelectedAnswer(null); 
         setIsCorrect(null); 
       } else {
-        console.log('Quiz completed!');
-        navigation.navigate("mainscreen"); 
+        navigation.navigate('EndQuizScreen', {
+          score: updatedScore,
+          totalQuestions: questions.length,
+        });
       }
     }, 1000);
+  };
+  const getButtonOpacity = (choice) => {
+    if (selectedAnswer === null) return 1; 
+    return selectedAnswer === choice ? 1 : 0.4; 
   };
 
   return (
@@ -45,28 +54,27 @@ export default function QuizScreen({ navigation }) {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[0]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#cf362b',}]}
+          style={[styles.button,{backgroundColor:selectedAnswer === choices[0]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#cf362b',opacity: getButtonOpacity(choices[0])}]}
           onPress={() => handleAnswerPress(choices[0])}
         >
           <Text style={styles.buttonText}>{choices[0]}</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[1]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#edb951',}]}
+          style={[styles.button,{backgroundColor:selectedAnswer === choices[1]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#edb951',opacity: getButtonOpacity(choices[1])}]}
           onPress={() => handleAnswerPress(choices[1])}
         >
           <Text style={styles.buttonText}>{choices[1]}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[2]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#7fcf46',}]}
+          style={[styles.button,{backgroundColor:selectedAnswer === choices[2]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#7fcf46',opacity: getButtonOpacity(choices[2])}]}
           onPress={() => handleAnswerPress(choices[2])}
         >
           <Text style={styles.buttonText}>{choices[2]}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button,{backgroundColor:selectedAnswer === choices[3]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#466fcf',}]}
+          style={[styles.button,{backgroundColor:selectedAnswer === choices[3]? (isCorrect && selectedAnswer === questions[currentQuestionIndex].answer? '#22732a' : '#912f33') : '#466fcf',opacity: getButtonOpacity(choices[3])}]}
           onPress={() => handleAnswerPress(choices[3])}
         >
           <Text style={styles.buttonText}>{choices[3]}</Text>
