@@ -46,3 +46,4 @@ expo-env.d.ts
 .gitignore
 package-lock.json
 
+ios
