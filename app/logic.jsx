@@ -15,16 +15,16 @@ export const parseQuestionFile = async () => {
 
   
   lines.forEach((line) => {
-    if (line.startsWith('<H:')) {
+    if (line.startsWith('$H:')) {
       if (currentQuestion.question) {
         questions.push(currentQuestion);
       }
       currentQuestion = {
         header: line.substring(3, line.length - 1).trim(),
       };
-    } else if (line.startsWith('<Q:')) {
+    } else if (line.startsWith('$Q:')) {
       currentQuestion.question = line.substring(3, line.length - 1).trim();
-    } else if (line.startsWith('<A:')) {
+    } else if (line.startsWith('$A:')) {
       const parts = line.substring(3, line.length - 1).split('|');
       currentQuestion.choices = parts.slice(0, -1);
       currentQuestion.answer = parseInt(parts[parts.length - 1], 10) - 1;
