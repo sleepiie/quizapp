@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
 import { parseQuestionFile } from './logic';
+import * as Speech from 'expo-speech';
 
 export default function QuizScreen({ navigation }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -45,12 +46,49 @@ export default function QuizScreen({ navigation }) {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  const detectLanguage = (text) => {
+    const thaiPattern = /[\u0E00-\u0E7F]/;
+    return thaiPattern.test(text) ? 'th' : 'en';
+  };
+
+  const speak = () => {
+    if (currentQuestion) {
+      const language = detectLanguage(currentQuestion.question);
+      const choicesLanguage = currentQuestion.choices.map((choice) => detectLanguage(choice));
+      const options = {
+        pitch: 1,
+        rate: 1.05,
+        language: language === 'th' ? 'th-TH' : 'en-US',
+        voice: language === 'th' ? 'com.apple.voice.compact.th-TH.Kanya' : 'com.apple.ttsbundle.Samantha-compact',
+      };
+      const choicesOptions = choicesLanguage.map((choiceLanguage) => ({
+        pitch: 1,
+        rate: 1.05,
+        language: choiceLanguage === 'th' ? 'th-TH' : 'en-US',
+        voice: choiceLanguage === 'th' ? 'com.apple.voice.compact.th-TH.Kanya' : 'com.apple.ttsbundle.Samantha-compact',
+      }));
+
+      if (currentQuestion.header) {
+        Speech.speak(currentQuestion.header, options);
+      }
+      Speech.speak(currentQuestion.question, options);
+      currentQuestion.choices.forEach((choice, index) => {
+        Speech.speak(`ตัวเลือกที่ ${index + 1}`, options);
+        Speech.speak(choice,choicesOptions[index]);
+      });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.header}>{currentQuestion.header}</Text>
         <Text style={styles.question}>{currentQuestion.question}</Text>
+        <TouchableOpacity style={styles.speakButton} onPress={speak}>
+          <Text style={styles.speakButtonText}>🔊</Text>
+        </TouchableOpacity>
       </View>
+     
       <View style={styles.buttonContainer}>
         {currentQuestion.choices.map((choice, index) => (
           <TouchableOpacity
@@ -118,5 +156,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  speakButton: {
+    padding: 10,
+    backgroundColor: '#4682B4',
+    borderRadius: 7,
+    alignSelf: 'center',
+  },
+  speakButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
